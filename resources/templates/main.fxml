@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.ui.MainController">
+   <center>
+      <TableView fx:id="compositionTable" editable="true" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" BorderPane.alignment="CENTER">
+        <columns>
+          <TableColumn fx:id="nameColumn" maxWidth="1.7976931348623157E308" prefWidth="120.0" text="Name" />
+          <TableColumn fx:id="artistColumn" prefWidth="145.0" text="Artist" />
+            <TableColumn fx:id="albumColumn" prefWidth="143.0" text="Album" />
+            <TableColumn fx:id="lengthColumn" prefWidth="70.0" text="Length" />
+            <TableColumn fx:id="yearColumn" prefWidth="75.0" text="Year" />
+            <TableColumn fx:id="genreColumn" prefWidth="77.0" text="Genre" />
+            <TableColumn fx:id="addDataColumn" prefWidth="146.0" text="Add Date" />
+        </columns>
+      </TableView>
+   </center>
+</BorderPane>
