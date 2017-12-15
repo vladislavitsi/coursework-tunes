@@ -23,7 +23,7 @@ public class MainController{
         TRACKS {
             @Override
             public void load(final MainController controller) throws SQLException, ClassNotFoundException {
-                load(controller, FileHandler.getTextFromFile("sql_requests\\selectAll.sql"));
+                load(controller, FileHandler.getTextFromFile("sql_requests\\selectCompositions.sql"));
             }
 
             public void load(final MainController controller, String sqlRequest) throws SQLException, ClassNotFoundException {
@@ -281,7 +281,7 @@ public class MainController{
             table = "artists";
             id = ((Artist) selectedObject).getId();
         }
-        updateTable(FileHandler.getTextFromFile("sql_requests\\selectAll.sql").replaceAll(";","")+" WHERE "+table+".id = "+id+";");
+        updateTable(FileHandler.getTextFromFile("sql_requests\\selectCompositions.sql").replaceAll(";","")+" WHERE "+table+".id = "+id+";");
         uncheckButtons();
     }
 
