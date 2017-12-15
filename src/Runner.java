@@ -21,9 +21,9 @@ public class Runner extends Application {
         primaryStage.setMinWidth(840);
         primaryStage.setMinHeight(640);
         primaryStage.show();
-        String bip = "music.mp3";
-        Media hit = new Media(new File(bip).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(hit);
+//        String bip = "music.mp3";
+//        Media hit = new Media(new File(bip).toURI().toString());
+//        MediaPlayer mediaPlayer = new MediaPlayer(hit);
 //        mediaPlayer.play();
 //        MainController controller = new FXMLLoader().getController();
 

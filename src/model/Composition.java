@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Composition {
+    private int id;
     private StringProperty name;
     private StringProperty artist;
     private StringProperty album;
@@ -14,10 +15,10 @@ public class Composition {
     private StringProperty year;
     private StringProperty genre;
     private ObjectProperty<Date> addDate;
-
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-    public Composition(String name, String artist, String album, int length, String year, String genre, String date) {
+    public Composition(int id, String name, String artist, String album, int length, String year, String genre, String date) {
+        this.id = id;
         this.name = new SimpleStringProperty(name);
         this.artist = new SimpleStringProperty(artist);
         this.album = new SimpleStringProperty(album);
@@ -106,6 +107,14 @@ public class Composition {
         this.genre.set(genre);
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -127,13 +136,14 @@ public class Composition {
     @Override
     public String toString() {
         return "Composition{" +
-                "name=" + name +
+                "id=" + id +
+                ", name=" + name +
                 ", artist=" + artist +
                 ", album=" + album +
                 ", length=" + length +
                 ", year=" + year +
                 ", genre=" + genre +
-                ", addDate=" + simpleDateFormat.format(addDate.getValue()) +
+                ", addDate=" + addDate +
                 '}';
     }
 
