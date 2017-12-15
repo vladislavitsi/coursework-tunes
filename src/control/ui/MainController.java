@@ -5,10 +5,8 @@ import control.FileHandler;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Artist;
@@ -39,14 +37,14 @@ public class MainController{
                 TableColumn<Composition, String> lengthColumn = new TableColumn<>("Length");
                 TableColumn<Composition, String> yearColumn = new TableColumn<>("Year");
                 TableColumn<Composition, String> genreColumn = new TableColumn<>("Genre");
-                TableColumn<Composition, Date> addDateColumn = new TableColumn<>("Add Date");
+                TableColumn<Composition, String> addDateColumn = new TableColumn<>("Add Date");
 
                 controller.tableView.getColumns().addAll(nameColumn, artistColumn, albumColumn, lengthColumn, yearColumn, genreColumn, addDateColumn);
 
                 nameColumn.setCellValueFactory(cellDate -> cellDate.getValue().nameProperty());
                 artistColumn.setCellValueFactory(cellDate -> cellDate.getValue().artistProperty());
                 albumColumn.setCellValueFactory(cellDate -> cellDate.getValue().albumProperty());
-//                lengthColumn.setCellValueFactory(cellDate -> cellDate.getValue().lengthProperty());
+                lengthColumn.setCellValueFactory(cellDate -> cellDate.getValue().lengthProperty().asString());
                 yearColumn.setCellValueFactory(cellDate -> cellDate.getValue().yearProperty());
                 genreColumn.setCellValueFactory(cellDate -> cellDate.getValue().genreProperty());
                 addDateColumn.setCellValueFactory(cellDate -> cellDate.getValue().addDateProperty());
@@ -57,24 +55,41 @@ public class MainController{
             }
 
             @Override
-            protected void add(MainController controller) throws IOException {
-                Stage stage = new Stage();
-                stage.setTitle("Add new");
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/templates/addComponent.fxml"));
-                stage.setScene(new Scene(loader.load()));
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.initOwner(controller.tableView.getScene().getWindow());
-                componentController = loader.getController();
-                componentController.getAddGrid().addRow(0, new Label("Name: "), new TextField());
-                componentController.getAddGrid().addRow(1, new Label("Artist: "), new TextField());
-//                componentController.getAddGrid().addRow(2, new Label("Album: "), new TextField());
-//                String name = ;
-//                String artist = ;
-//                String album = resultSet.getString("album");
-//                int length = resultSet.getInt("length");
-//                String year = resultSet.getString("year");
-//                String genre = resultSet.getString("genre");
-//                String addDate = resultSet.getString("addDate");
+            protected void add(MainController controller, Stage stage, AddComponentController componentController) throws IOException, SQLException, ClassNotFoundException {
+                TextField nameField = new TextField();
+                ChoiceBox<Artist> artistChoiceBox = new ChoiceBox<>(FXCollections.observableList(DBHandler.getArtists(FileHandler.getTextFromFile("sql_requests\\selectArtists.sql"))));
+                TextField albumField = new TextField();
+                TextField lengthField = new TextField();
+                TextField yearField = new TextField();
+                ChoiceBox<Genre> genreFiled = new ChoiceBox<>(FXCollections.observableList(DBHandler.getGenres(FileHandler.getTextFromFile("sql_requests\\selectGenres.sql"))));
+
+                componentController.getAddGrid().addRow(0, new Label("Name: "), nameField);
+                componentController.getAddGrid().addRow(1, new Label("Artist: "), artistChoiceBox);
+                componentController.getAddGrid().addRow(2, new Label("Album: "), albumField);
+                componentController.getAddGrid().addRow(3, new Label("Length (in sec): "), lengthField);
+                componentController.getAddGrid().addRow(4, new Label("Year: "), yearField);
+                componentController.getAddGrid().addRow(5, new Label("Genre: "), genreFiled);
+
+                componentController.getCancelButton().setOnAction(event -> {
+                    stage.close();
+                });
+
+                componentController.getAddButton().setOnAction(event -> {
+                    try {
+                        String name = nameField.getText();
+                        int artist = artistChoiceBox.getValue().getId();
+                        String album = albumField.getText();
+                        int length = Integer.parseInt(lengthField.getText());
+                        String year = yearField.getText();
+                        int genre = genreFiled.getValue().getId();
+                        Date addDate = new Date();
+                        DBHandler.insertComposition(name, artist, album, length, year, genre, addDate);
+                        stage.close();
+                        controller.updateTable();
+                    } catch (NullPointerException | SQLException | ClassNotFoundException | NumberFormatException e){
+                        new ErrorMessage("Something went wrong.");
+                    }
+                });
                 stage.showAndWait();
             }
         },
@@ -82,7 +97,6 @@ public class MainController{
             @Override
             public void load(final MainController controller) throws SQLException, ClassNotFoundException {
                 load(controller, FileHandler.getTextFromFile("sql_requests\\selectArtists.sql"));
-
             }
 
             @Override
@@ -105,9 +119,29 @@ public class MainController{
             }
 
             @Override
-            protected void add(MainController controller) {
+            protected void add(MainController controller, Stage stage, AddComponentController componentController) throws IOException, SQLException, ClassNotFoundException {
+                TextField nameField = new TextField();
 
+                componentController.getAddGrid().addRow(0, new Label("Name: "), nameField);
+
+                componentController.getCancelButton().setOnAction(event -> {
+                    stage.close();
+                });
+
+                componentController.getAddButton().setOnAction(event -> {
+                    try {
+                        String name = nameField.getText();
+                        DBHandler.insertArtist(name);
+                        stage.close();
+                        controller.updateTable();
+                    } catch (SQLException | ClassNotFoundException | NumberFormatException e){
+                        new ErrorMessage("Something went wrong.");
+                    }
+                });
+                stage.showAndWait();
             }
+
+
         },
         GENRES {
             @Override
@@ -135,9 +169,29 @@ public class MainController{
             }
 
             @Override
-            protected void add(MainController controller) {
+            protected void add(MainController controller, Stage stage, AddComponentController componentController) throws IOException, SQLException, ClassNotFoundException {
+                TextField nameField = new TextField();
 
+                componentController.getAddGrid().addRow(0, new Label("Name: "), nameField);
+
+                componentController.getCancelButton().setOnAction(event -> {
+                    stage.close();
+                });
+
+                componentController.getAddButton().setOnAction(event -> {
+                    try {
+                        String name = nameField.getText();
+                        DBHandler.insertGenre(name);
+                        stage.close();
+                        controller.updateTable();
+                    } catch (SQLException | ClassNotFoundException | NumberFormatException e){
+                        new ErrorMessage("Something went wrong.");
+                    }
+                });
+                stage.showAndWait();
             }
+
+
         };
 
         public void loadTableView(final MainController controller) throws SQLException, ClassNotFoundException{
@@ -157,13 +211,22 @@ public class MainController{
         protected abstract void load(final MainController controller) throws SQLException, ClassNotFoundException;
         protected abstract void load(final MainController controller, final String sqlRequest) throws SQLException, ClassNotFoundException;
 
-        protected abstract void add(final MainController controller) throws IOException;
+        void addNewElement(final MainController controller) throws SQLException, IOException, ClassNotFoundException {
+            Stage stage = new Stage();
+            stage.setTitle("Add new");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/templates/addComponent.fxml"));
+            stage.setScene(new Scene(loader.load()));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(controller.tableView.getScene().getWindow());
+            AddComponentController componentController = loader.getController();
+            add(controller, stage, componentController);
+        }
+
+        protected abstract void add(final MainController controller, final Stage addStage, final  AddComponentController componentController) throws IOException, SQLException, ClassNotFoundException;
     }
 
     @FXML
     private TableView tableView;
-    @FXML
-    private Button addButton;
     @FXML
     private Button actionButton;
     @FXML
@@ -174,14 +237,6 @@ public class MainController{
     private Button genresButton;
     @FXML
     private Label itemsCounter;
-    @FXML
-    private Button add;
-    @FXML
-    private Button cancelAdd;
-    @FXML
-    private GridPane addGrid;
-
-    public static AddComponentController componentController;
 
     private Object selectedObject;
     private Mode mode;
@@ -226,16 +281,15 @@ public class MainController{
             table = "artists";
             id = ((Artist) selectedObject).getId();
         }
-        updateTable("SELECT compositions.id, compositions.name, artists.name AS \"artist\", compositions.album, compositions.length, compositions.year, genres.name AS \"genre\", compositions.addDate\n" +
-                "FROM compositions LEFT JOIN artists ON compositions.artists = artists.id LEFT JOIN genres ON compositions.genre = genres.id WHERE "+table+".id = "+id+";");
+        updateTable(FileHandler.getTextFromFile("sql_requests\\selectAll.sql").replaceAll(";","")+" WHERE "+table+".id = "+id+";");
         uncheckButtons();
     }
 
     @FXML
     void addButtonAction() {
         try {
-            mode.add(this);
-        } catch (IOException e) {
+            mode.addNewElement(this);
+        } catch (IOException | SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -264,22 +318,16 @@ public class MainController{
                 });
     }
 
-    @FXML
-    public void cancelAdd(){
-
-    }
-
     private void recountItems(){
         itemsCounter.setText(String.valueOf(tableView.getItems().size()));
     }
+
     private void updateTable(String sqlRequest) {
         try {
             mode.loadTableView(this, sqlRequest);
             recountItems();
         } catch (SQLException | ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("SWW");
-            alert.showAndWait();
+            new ErrorMessage("Error while update data");
         }
     }
     private void updateTable() {
@@ -287,9 +335,7 @@ public class MainController{
             mode.loadTableView(this);
             recountItems();
         } catch (SQLException | ClassNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("SWW");
-            alert.showAndWait();
+            new ErrorMessage("Error while update data");
         }
     }
 

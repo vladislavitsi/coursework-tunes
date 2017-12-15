@@ -1,6 +1,5 @@
 package control.ui;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
@@ -14,11 +13,6 @@ public class AddComponentController {
 
     @FXML
     private Button cancelButton;
-
-    @FXML
-    void cancelAdd(ActionEvent event) {
-
-    }
 
     public GridPane getAddGrid() {
         return addGrid;

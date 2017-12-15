@@ -7,9 +7,8 @@ import model.Composition;
 import model.Genre;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.Date;
 
 public abstract class DBHandler {
 
@@ -69,9 +68,27 @@ public abstract class DBHandler {
         preparedStatement.execute();
     }
 
-
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        System.out.println(getCompositions(FileHandler.getTextFromFile("sql_requests\\selectAll.sql")));
+    public static void insertArtist(String name) throws SQLException, ClassNotFoundException {
+        PreparedStatement preparedStatement = getConnection().prepareStatement(FileHandler.getTextFromFile("sql_requests/insertArtist.sql"));
+        preparedStatement.setString(1, name);
+        preparedStatement.execute();
     }
 
+    public static void insertGenre(String name) throws SQLException, ClassNotFoundException {
+        PreparedStatement preparedStatement = getConnection().prepareStatement(FileHandler.getTextFromFile("sql_requests/insertGenre.sql"));
+        preparedStatement.setString(1, name);
+        preparedStatement.execute();
+    }
+
+    public static void insertComposition(String name, int artist, String album, int length, String year, int genre, Date addDate) throws SQLException, ClassNotFoundException {
+        PreparedStatement preparedStatement = getConnection().prepareStatement(FileHandler.getTextFromFile("sql_requests/insertComposition.sql"));
+        preparedStatement.setString(1, name);
+        preparedStatement.setString(2, album);
+        preparedStatement.setInt(3, length);
+        preparedStatement.setString(4, year);
+        preparedStatement.setInt(5, genre);
+        preparedStatement.setInt(6, artist);
+        preparedStatement.setString(7, Composition.SIMPLE_DATE_FORMAT.format(addDate));
+        preparedStatement.execute();
+    }
 }

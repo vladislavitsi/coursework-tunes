@@ -2,34 +2,28 @@ package model;
 
 import javafx.beans.property.*;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Composition {
     private int id;
     private StringProperty name;
     private StringProperty artist;
     private StringProperty album;
-    private IntegerProperty length;
+    private ObjectProperty<Length> length;
     private StringProperty year;
     private StringProperty genre;
-    private ObjectProperty<Date> addDate;
-    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    private StringProperty addDate;
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
     public Composition(int id, String name, String artist, String album, int length, String year, String genre, String date) {
         this.id = id;
         this.name = new SimpleStringProperty(name);
         this.artist = new SimpleStringProperty(artist);
         this.album = new SimpleStringProperty(album);
-        this.length = new SimpleIntegerProperty(length);
+        this.length = new SimpleObjectProperty<>(new Length(length));
         this.year = new SimpleStringProperty(year);
         this.genre = new SimpleStringProperty(genre);
-        try {
-            this.addDate = new SimpleObjectProperty<>(simpleDateFormat.parse(date));
-        } catch (ParseException e) {
-            this.addDate = null;
-        }
+        this.addDate = new SimpleStringProperty(date);
     }
 
     public Composition() {
@@ -72,15 +66,15 @@ public class Composition {
     }
 
     public int getLength() {
-        return length.get();
+        return length.getValue().getLength();
     }
 
-    public IntegerProperty lengthProperty() {
+    public ObjectProperty<Length> lengthProperty() {
         return length;
     }
 
     public void setLength(int length) {
-        this.length.set(length);
+        this.length.set(new Length(length));
     }
 
     public String getYear() {
@@ -147,15 +141,15 @@ public class Composition {
                 '}';
     }
 
-    public Date getAddDate() {
+    public String getAddDate() {
         return addDate.get();
     }
 
-    public ObjectProperty<Date> addDateProperty() {
+    public StringProperty addDateProperty() {
         return addDate;
     }
 
-    public void setAddDate(Date addDate) {
+    public void setAddDate(String addDate) {
         this.addDate.set(addDate);
     }
 }

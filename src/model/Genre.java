@@ -45,4 +45,9 @@ public class Genre {
     public void setCounter(int counter) {
         this.counter.set(counter);
     }
+
+    @Override
+    public String toString() {
+        return name.getValue();
+    }
 }
